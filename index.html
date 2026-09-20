@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeSim Pro - Dual Module Trading Terminal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Auth Modal (Signup & Login with Role Redirection) -->
+  <div id="auth-overlay" class="modal-overlay">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="logo-icon">📈</div>
+        <h2>TradeSim <span class="badge-pro">SDC</span></h2>
+      </div>
+      <p id="auth-subtitle" class="subtitle" style="text-align: center; margin-bottom: 16px;">
+        Sign in with client credentials or enter admin mode
+      </p>
+
+      <form id="auth-form">
+        <div class="form-group">
+          <label for="auth-role">Account Access Level</label>
+          <select id="auth-role" class="cap-select" style="width: 100%;">
+            <option value="user">User / Trader Demat Account</option>
+            <option value="admin">Administrator / System Overseer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="auth-username">Username</label>
+          <input type="text" id="auth-username" required placeholder="user: hanumanth | admin: admin" />
+        </div>
+        <div class="form-group">
+          <label for="auth-password">Password</label>
+          <input type="password" id="auth-password" required placeholder="user: any | admin: admin123" />
+        </div>
+        <button type="submit" id="auth-submit-btn" class="submit-btn btn-green">
+          Access Trading Terminal
+        </button>
+      </form>
+
+      <div class="auth-toggle" id="auth-toggle-box">
+        <span id="auth-toggle-msg">Don't have an account?</span>
+        <button type="button" id="auth-toggle-btn">Sign Up</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Digital KYC Verification Modal (User) -->
+  <div id="kyc-overlay" class="modal-overlay hidden">
+    <div class="auth-card" style="max-width: 460px;">
+      <div class="profile-header">
+        <div>
+          <h3>Digital e-KYC Verification</h3>
+          <p class="subtitle">Submit identification to unlock live order execution</p>
+        </div>
+        <button type="button" id="close-kyc-btn" class="close-x">&times;</button>
+      </div>
+      <form id="kyc-form" style="margin-top: 12px;">
+        <div class="form-group">
+          <label for="kyc-fullname">Full Name (as per PAN)</label>
+          <input type="text" id="kyc-fullname" required placeholder="e.g. Marepally Hanumanth" />
+        </div>
+        <div class="form-group">
+          <label for="kyc-pan">PAN Number (10 Characters)</label>
+          <input type="text" id="kyc-pan" maxlength="10" required placeholder="ABCDE1234F" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label for="kyc-aadhaar">Aadhaar UID (12 Digits)</label>
+          <input type="text" id="kyc-aadhaar" maxlength="12" required placeholder="1234 5678 9012" />
+        </div>
+        <div class="form-group">
+          <label for="kyc-bank">Bank IFSC Reference</label>
+          <input type="text" id="kyc-bank" required placeholder="HDFC0001234" />
+        </div>
+        <button type="submit" class="submit-btn btn-green">Submit KYC for Verification</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Groww-Style Add Money / Deposit Modal -->
+  <div id="deposit-overlay" class="modal-overlay hidden">
+    <div class="auth-card groww-deposit-card">
+      <div class="profile-header">
+        <div>
+          <h3>Add Money to Wallet</h3>
+          <p class="subtitle">Groww-style Instant UPI & Net Banking Deposit</p>
+        </div>
+        <button type="button" id="close-deposit-btn" class="close-x">&times;</button>
+      </div>
+
+      <!-- Amount Entry & Quick Chips -->
+      <div class="deposit-amt-entry">
+        <label class="deposit-amt-label">Enter Amount</label>
+        <div class="amt-input-wrap">
+          <span class="currency-symbol">$</span>
+          <input type="number" id="deposit-custom-amt" value="1000" min="10" max="500000" />
+        </div>
+        <div class="quick-deposit-grid">
+          <button type="button" class="quick-amt-btn" data-amt="100">+100</button>
+          <button type="button" class="quick-amt-btn" data-amt="500">+500</button>
+          <button type="button" class="quick-amt-btn active" data-amt="1000">+1,000</button>
+          <button type="button" class="quick-amt-btn" data-amt="5000">+5,000</button>
+        </div>
+      </div>
+
+      <!-- Payment Method Selection Grid -->
+      <div class="payment-methods-section">
+        <label class="section-title">Select Payment Mode</label>
+        
+        <!-- PhonePe Tile -->
+        <div class="pay-option selected" data-method="PhonePe">
+          <div class="pay-option-left">
+            <div class="pay-icon phonepe-icon">🟣</div>
+            <div>
+              <div class="pay-name">PhonePe UPI</div>
+              <div class="pay-sub">Fast & auto-approved via UPI app</div>
+            </div>
+          </div>
+          <input type="radio" name="pay-method" value="PhonePe" checked />
+        </div>
+
+        <!-- Google Pay Tile -->
+        <div class="pay-option" data-method="GooglePay">
+          <div class="pay-option-left">
+            <div class="pay-icon gpay-icon">🔵</div>
+            <div>
+              <div class="pay-name">Google Pay (GPay)</div>
+              <div class="pay-sub">Instant zero-fee credit</div>
+            </div>
+          </div>
+          <input type="radio" name="pay-method" value="GooglePay" />
+        </div>
+
+        <!-- Paytm Tile -->
+        <div class="pay-option" data-method="Paytm">
+          <div class="pay-option-left">
+            <div class="pay-icon paytm-icon">🟦</div>
+            <div>
+              <div class="pay-name">Paytm UPI / Wallet</div>
+              <div class="pay-sub">One-click simulated payment</div>
+            </div>
+          </div>
+          <input type="radio" name="pay-method" value="Paytm" />
+        </div>
+
+        <!-- Other UPI ID -->
+        <div class="pay-option" data-method="CustomUPI">
+          <div class="pay-option-left">
+            <div class="pay-icon upi-icon">🆔</div>
+            <div>
+              <div class="pay-name">Other UPI ID / VPA</div>
+              <div class="pay-sub">BHIM, Cred, or custom UPI handle</div>
+            </div>
+          </div>
+          <input type="radio" name="pay-method" value="CustomUPI" />
+        </div>
+
+        <!-- Net Banking -->
+        <div class="pay-option" data-method="NetBanking">
+          <div class="pay-option-left">
+            <div class="pay-icon bank-icon">🏦</div>
+            <div>
+              <div class="pay-name">Net Banking</div>
+              <div class="pay-sub">HDFC, SBI, ICICI, Axis Bank</div>
+            </div>
+          </div>
+          <input type="radio" name="pay-method" value="NetBanking" />
+        </div>
+
+        <!-- Custom UPI Input field -->
+        <div id="upi-input-container" class="form-group hidden" style="margin-top: 10px;">
+          <input type="text" id="custom-upi-id" placeholder="e.g. yourname@okhdfcbank" />
+        </div>
+      </div>
+
+      <!-- Processing State Placeholder -->
+      <div id="deposit-loader" class="deposit-loader-overlay hidden">
+        <div class="loader-spinner"></div>
+        <p id="deposit-loader-text" class="font-bold" style="margin-top: 10px;">Connecting to PhonePe Gateway...</p>
+        <span class="subtitle">Please do not refresh the screen</span>
+      </div>
+
+      <button type="button" id="btn-pay-now" class="submit-btn btn-green" style="margin-top: 14px;">
+        Pay $1,000 via PhonePe
+      </button>
+    </div>
+  </div>
+
+  <!-- Top Application Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-icon">📈</div>
+        <div>
+          <h1>TradeSim <span id="module-indicator-badge" class="badge-pro">USER PORTAL</span></h1>
+          <p class="subtitle">SDC Final Project Review Workspace</p>
+        </div>
+      </div>
+
+      <!-- Navigation for User Module -->
+      <nav class="nav-tabs" id="user-nav-tabs">
+        <button class="nav-tab-btn active" data-tab="stocks-view">Stocks</button>
+        <button class="nav-tab-btn" data-tab="trade-view">Trade</button>
+        <button class="nav-tab-btn" data-tab="holdings-view">Holdings <span id="nav-holdings-badge" class="count-pill">0</span></button>
+        <button class="nav-tab-btn" data-tab="orders-view">Orders <span id="nav-orders-badge" class="count-pill">0</span></button>
+      </nav>
+
+      <!-- Navigation for Admin Module -->
+      <nav class="nav-tabs hidden" id="admin-nav-tabs">
+        <button class="nav-tab-btn active" data-tab="admin-users-view">User & KYC Oversight</button>
+        <button class="nav-tab-btn" data-tab="admin-market-view">Market Control Desk</button>
+      </nav>
+
+      <!-- User/Admin Status Ribbon -->
+      <div class="user-status">
+        <div id="user-status-metrics" style="display: flex; gap: 14px; align-items: center;">
+          <div class="status-item">
+            <span class="status-label">Wallet:</span>
+            <span id="nav-cash" class="status-value text-green">$0.00</span>
+          </div>
+          <button type="button" id="open-deposit-btn" class="add-funds-btn">+ Add Money</button>
+          <span id="nav-kyc-status" class="badge badge-red cursor-pointer">KYC Pending</span>
+        </div>
+        <button type="button" id="btn-logout" class="profile-pill-btn">
+          <span class="avatar-dot"></span>
+          <span id="nav-user-label">Sign Out</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ROOT MODULE 1: USER WORKSPACE -->
+  <div id="user-module-root" class="app-layout">
+    <!-- User Top KPI Ribbon -->
+    <section class="kpi-ribbon">
+      <div class="kpi-card">
+        <span class="kpi-label">Trading Balance</span>
+        <div id="kpi-cash" class="kpi-val text-green">$0.00</div>
+        <span class="kpi-sub">Available Purchasing Power</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Invested Equity</span>
+        <div id="kpi-invested" class="kpi-val">$0.00</div>
+        <span class="kpi-sub">Mark-to-Market Valuation</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Portfolio Net Worth</span>
+        <div id="kpi-networth" class="kpi-val">$0.00</div>
+        <span class="kpi-sub">Liquid Cash + Open Assets</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Unrealized P&L</span>
+        <div id="kpi-pnl" class="kpi-val text-green">+$0.00</div>
+        <span class="kpi-sub">Aggregate Position Returns</span>
+      </div>
+    </section>
+
+    <!-- TAB 1: STOCKS SCREENER -->
+    <section id="stocks-view" class="tab-view active">
+      <div class="card">
+        <div class="stocks-toolbar">
+          <div>
+            <h2 class="card-title">Equities & Market Screener</h2>
+            <p class="subtitle">Live multi-cap stock feeds populated dynamically via state</p>
+          </div>
+          <div class="filter-actions">
+            <input type="text" id="screener-search" placeholder="Search symbol or name..." class="search-input" />
+            <select id="screener-filter" class="cap-select">
+              <option value="ALL">All Categories</option>
+              <option value="Large Cap">Large Cap</option>
+              <option value="Small/Mid Cap">Small / Mid Cap</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-container" style="max-height: 480px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Company Name</th>
+                <th>Segment</th>
+                <th>Live Price</th>
+                <th>24h Delta</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="watchlist-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: TRADE EXECUTION DESK -->
+    <section id="trade-view" class="tab-view hidden">
+      <div class="trade-grid">
+        <div class="card chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="ticker-tags">
+                <span id="trade-active-category" class="cat-tag">Large Cap</span>
+                <span class="live-indicator"><span class="pulse-dot"></span> SIM ACTIVE</span>
+              </div>
+              <h2 id="trade-active-name" class="stock-title">Apple Inc. (AAPL)</h2>
+              <div class="price-row">
+                <span id="trade-active-price" class="current-price">$185.50</span>
+                <span id="trade-active-delta" class="badge badge-green">+0.00%</span>
+                <span id="trade-hover-price" class="chart-hover-val font-mono"></span>
+              </div>
+            </div>
+            <div class="timeframe-selector" id="timeframe-container">
+              <button class="tf-btn active" data-tf="1D">1D</button>
+              <button class="tf-btn" data-tf="1W">1W</button>
+              <button class="tf-btn" data-tf="1M">1M</button>
+              <button class="tf-btn" data-tf="1Y">1Y</button>
+              <button class="tf-btn" data-tf="3Y">3Y</button>
+              <button class="tf-btn" data-tf="5Y">5Y</button>
+            </div>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="price-chart"></canvas>
+            <div id="chart-crosshair" class="crosshair-line hidden"></div>
+            <div id="chart-tooltip" class="chart-tooltip hidden"></div>
+          </div>
+        </div>
+
+        <aside class="card order-card">
+          <h3 class="card-title">Order Execution Desk</h3>
+          <div id="kyc-warning-banner" class="kyc-callout-warning">
+            ⚠️ <strong>KYC Required:</strong> Digital KYC verification must be approved by the Admin before trading.
+          </div>
+          <form id="order-form">
+            <div class="action-toggle">
+              <button type="button" id="btn-buy" class="toggle-btn active-buy">Buy</button>
+              <button type="button" id="btn-sell" class="toggle-btn">Sell</button>
+            </div>
+            <div class="form-group">
+              <label for="order-symbol-select">Trading Asset</label>
+              <select id="order-symbol-select" class="cap-select" style="width: 100%;"></select>
+            </div>
+            <div class="form-group">
+              <label for="order-qty">Quantity of Units</label>
+              <input type="number" id="order-qty" min="1" value="1" />
+            </div>
+            <div class="estimate-box">
+              <div class="estimate-row">
+                <span>Unit Price:</span>
+                <span id="order-unit-price" class="font-mono">$0.00</span>
+              </div>
+              <div class="estimate-row font-bold">
+                <span>Total Order Cost:</span>
+                <span id="order-total" class="font-mono text-white">$0.00</span>
+              </div>
+            </div>
+            <button type="submit" id="btn-submit" class="submit-btn btn-green">Confirm Purchase</button>
+          </form>
+          <div class="asset-position-box">
+            <span class="stat-label">Position in <span id="pos-sym">AAPL</span></span>
+            <div class="font-bold text-white" id="pos-details">0 units ($0.00)</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- TAB 3: HOLDINGS -->
+    <section id="holdings-view" class="tab-view hidden">
+      <div class="card">
+        <h2 class="card-title">Active Portfolio Holdings</h2>
+        <div class="table-container" style="max-height: none; margin-top: 10px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Company</th>
+                <th>Units</th>
+                <th>Avg Price (VWAP)</th>
+                <th>Current Price</th>
+                <th>Current Value</th>
+                <th>Unrealized P&L</th>
+                <th>Return (%)</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="full-holdings-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: ORDERS -->
+    <section id="orders-view" class="tab-view hidden">
+      <div class="card">
+        <h2 class="card-title">Executed Orders Audit Trail</h2>
+        <div class="table-container" style="max-height: none; margin-top: 10px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date & Time</th>
+                <th>Action</th>
+                <th>Symbol</th>
+                <th>Quantity</th>
+                <th>Execution Price</th>
+                <th>Total Value</th>
+              </tr>
+            </thead>
+            <tbody id="full-orders-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ROOT MODULE 2: ADMIN WORKSPACE -->
+  <div id="admin-module-root" class="app-layout hidden">
+    <section class="kpi-ribbon">
+      <div class="kpi-card">
+        <span class="kpi-label">Registered Traders</span>
+        <div id="admin-kpi-users" class="kpi-val text-blue">0</div>
+        <span class="kpi-sub">Total Client Accounts</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Pending KYC Queue</span>
+        <div id="admin-kpi-kyc-pending" class="kpi-val text-red">0</div>
+        <span class="kpi-sub">Requires Compliance Approval</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Total System Liquidity</span>
+        <div id="admin-kpi-total-cash" class="kpi-val text-green">$0.00</div>
+        <span class="kpi-sub">Circulating Virtual Capital</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Tradable Equities</span>
+        <div id="admin-kpi-stocks" class="kpi-val text-white">0</div>
+        <span class="kpi-sub">Active Market Securities</span>
+      </div>
+    </section>
+
+    <section id="admin-users-view" class="tab-view active">
+      <div class="card">
+        <h2 class="card-title">User Accounts & KYC Compliance Management</h2>
+        <p class="subtitle" style="margin-bottom: 12px;">Approve or reject client e-KYC submissions and inspect balances</p>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Client ID</th>
+                <th>Username</th>
+                <th>Wallet Balance</th>
+                <th>Full Name</th>
+                <th>PAN Number</th>
+                <th>KYC Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin-market-view" class="tab-view hidden">
+      <div class="trade-grid">
+        <div class="card">
+          <h2 class="card-title">Add New Market Security (IPO / Listing)</h2>
+          <p class="subtitle" style="margin-bottom: 14px;">Introduce new equities directly into the market simulation engine</p>
+          <form id="admin-add-stock-form">
+            <div class="form-group">
+              <label for="new-stock-symbol">Ticker Symbol</label>
+              <input type="text" id="new-stock-symbol" maxlength="10" required placeholder="SYMBOL" style="text-transform: uppercase;" />
+            </div>
+            <div class="form-group">
+              <label for="new-stock-name">Company Full Name</label>
+              <input type="text" id="new-stock-name" required placeholder="Tata Motors Ltd." />
+            </div>
+            <div class="form-group">
+              <label for="new-stock-category">Market Capitalization Category</label>
+              <select id="new-stock-category" class="cap-select" style="width: 100%;">
+                <option value="Large Cap">Large Cap</option>
+                <option value="Small/Mid Cap">Small / Mid Cap</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="new-stock-price">Initial Listing Price ($)</label>
+              <input type="number" step="0.01" id="new-stock-price" min="1" required placeholder="e.g. 150.00" />
+            </div>
+            <button type="submit" class="submit-btn btn-green">List Equity on Exchange</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Active Market Listings</h2>
+          <p class="subtitle" style="margin-bottom: 12px;">Existing tradable assets in runtime memory</p>
+          <div class="table-container" style="max-height: 420px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th>Company</th>
+                  <th>Current Price</th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-stocks-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

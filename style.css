@@ -53,10 +53,30 @@ body {
 .profile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .close-x { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
 
-/* Groww-Style Add Money Styles */
-.groww-deposit-card {
-  max-width: 460px;
+.back-arrow-btn {
+  background: transparent; border: none; color: var(--text-secondary); font-size: 1.3rem;
+  cursor: pointer; padding: 0 4px;
 }
+.back-arrow-btn:hover { color: #fff; }
+
+/* Groww Step-by-Step Checkout Card */
+.groww-checkout-card {
+  max-width: 460px;
+  min-height: 380px;
+}
+
+.summary-pill-bar {
+  background-color: var(--bg-base);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+}
+
 .deposit-amt-entry {
   background-color: var(--bg-base);
   border: 1px solid var(--border-color);
@@ -122,14 +142,6 @@ body {
   overflow-y: auto;
   padding-right: 4px;
 }
-.section-title {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  font-weight: 600;
-  margin-bottom: 2px;
-  display: block;
-}
 .pay-option {
   display: flex;
   justify-content: space-between;
@@ -173,7 +185,78 @@ body {
   color: var(--text-secondary);
 }
 
-/* Spinner Overlay */
+/* Step 3: PIN Input Screen */
+.pin-auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+.pin-brand-header {
+  text-align: center;
+}
+.pin-amount-due {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-family: monospace;
+  margin-top: 4px;
+}
+.pin-inputs-wrapper {
+  display: flex;
+  gap: 12px;
+  margin: 14px 0;
+}
+.pin-box {
+  width: 46px;
+  height: 48px;
+  background-color: var(--bg-base);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #ffffff;
+  outline: none;
+}
+.pin-box:focus {
+  border-color: var(--accent-green);
+}
+.pin-warning-note {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Step 4: Success Screen */
+.success-screen-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 14px 0;
+}
+.success-checkmark-circle {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background-color: var(--accent-green);
+  color: #030712;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 900;
+}
+.tx-id-badge {
+  background-color: var(--bg-base);
+  border: 1px solid var(--border-color);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+/* Processing Overlay */
 .deposit-loader-overlay {
   position: absolute;
   inset: 0;
@@ -194,6 +277,46 @@ body {
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Admin Profile Badge & Dropdown */
+.admin-profile-wrap {
+  position: relative;
+}
+.admin-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  width: 200px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
+  z-index: 200;
+  overflow: hidden;
+}
+.admin-dropdown-header {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+}
+.admin-dropdown-divider {
+  height: 1px;
+  background-color: var(--border-color);
+}
+.admin-logout-btn {
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  color: var(--accent-red);
+  font-weight: 700;
+  font-size: 0.825rem;
+  text-align: left;
+  cursor: pointer;
+}
+.admin-logout-btn:hover {
+  background-color: rgba(244, 63, 94, 0.1);
+}
 
 /* Header */
 .app-header {
@@ -240,7 +363,7 @@ body {
 }
 .avatar-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-green); }
 
-/* Layout & KPI Ribbon (CSS Grid) */
+/* Layout & KPI Ribbon */
 .app-layout { max-width: 1400px; margin: 0 auto; padding: 18px 16px; }
 .kpi-ribbon {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;

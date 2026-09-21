@@ -79,112 +79,155 @@
     </div>
   </div>
 
-  <!-- Groww-Style Add Money / Deposit Modal -->
+  <!-- ==================== GROWW-STYLE STEP-BY-STEP PAYMENT MODAL ==================== -->
   <div id="deposit-overlay" class="modal-overlay hidden">
-    <div class="auth-card groww-deposit-card">
+    <div class="auth-card groww-checkout-card">
       <div class="profile-header">
-        <div>
-          <h3>Add Money to Wallet</h3>
-          <p class="subtitle">Groww-style Instant UPI & Net Banking Deposit</p>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" id="groww-back-btn" class="back-arrow-btn hidden">&larr;</button>
+          <div>
+            <h3 id="groww-step-title">Add Money to Wallet</h3>
+            <p id="groww-step-sub" class="subtitle">Step 1 of 3: Enter Amount</p>
+          </div>
         </div>
         <button type="button" id="close-deposit-btn" class="close-x">&times;</button>
       </div>
 
-      <!-- Amount Entry & Quick Chips -->
-      <div class="deposit-amt-entry">
-        <label class="deposit-amt-label">Enter Amount</label>
-        <div class="amt-input-wrap">
-          <span class="currency-symbol">$</span>
-          <input type="number" id="deposit-custom-amt" value="1000" min="10" max="500000" />
+      <!-- STEP 1: Enter Amount & Chips -->
+      <div id="groww-step-1" class="groww-flow-step">
+        <div class="deposit-amt-entry">
+          <label class="deposit-amt-label">Enter Deposit Amount</label>
+          <div class="amt-input-wrap">
+            <span class="currency-symbol">$</span>
+            <input type="number" id="deposit-custom-amt" value="1000" min="10" max="500000" />
+          </div>
+          <div class="quick-deposit-grid">
+            <button type="button" class="quick-amt-btn" data-amt="100">+100</button>
+            <button type="button" class="quick-amt-btn" data-amt="500">+500</button>
+            <button type="button" class="quick-amt-btn active" data-amt="1000">+1,000</button>
+            <button type="button" class="quick-amt-btn" data-amt="5000">+5,000</button>
+          </div>
         </div>
-        <div class="quick-deposit-grid">
-          <button type="button" class="quick-amt-btn" data-amt="100">+100</button>
-          <button type="button" class="quick-amt-btn" data-amt="500">+500</button>
-          <button type="button" class="quick-amt-btn active" data-amt="1000">+1,000</button>
-          <button type="button" class="quick-amt-btn" data-amt="5000">+5,000</button>
+        <button type="button" id="btn-step1-continue" class="submit-btn btn-green">
+          Continue to Payment Mode &rarr;
+        </button>
+      </div>
+
+      <!-- STEP 2: Select Payment Method -->
+      <div id="groww-step-2" class="groww-flow-step hidden">
+        <div class="summary-pill-bar">
+          <span>Amount to Pay:</span>
+          <strong class="text-green font-mono" id="step2-amount-label">$1,000.00</strong>
+        </div>
+
+        <div class="payment-methods-section">
+          <!-- PhonePe -->
+          <div class="pay-option selected" data-method="PhonePe">
+            <div class="pay-option-left">
+              <div class="pay-icon phonepe-icon">🟣</div>
+              <div>
+                <div class="pay-name">PhonePe UPI</div>
+                <div class="pay-sub">Fast & auto-approved via UPI PIN</div>
+              </div>
+            </div>
+            <input type="radio" name="groww-pay" value="PhonePe" checked />
+          </div>
+
+          <!-- Google Pay -->
+          <div class="pay-option" data-method="GooglePay">
+            <div class="pay-option-left">
+              <div class="pay-icon gpay-icon">🔵</div>
+              <div>
+                <div class="pay-name">Google Pay (GPay)</div>
+                <div class="pay-sub">Instant bank UPI debit</div>
+              </div>
+            </div>
+            <input type="radio" name="groww-pay" value="GooglePay" />
+          </div>
+
+          <!-- Paytm -->
+          <div class="pay-option" data-method="Paytm">
+            <div class="pay-option-left">
+              <div class="pay-icon paytm-icon">🟦</div>
+              <div>
+                <div class="pay-name">Paytm UPI / Wallet</div>
+                <div class="pay-sub">One-click simulated payment</div>
+              </div>
+            </div>
+            <input type="radio" name="groww-pay" value="Paytm" />
+          </div>
+
+          <!-- Credit/Debit Card -->
+          <div class="pay-option" data-method="Card">
+            <div class="pay-option-left">
+              <div class="pay-icon card-icon">💳</div>
+              <div>
+                <div class="pay-name">Credit / Debit Card</div>
+                <div class="pay-sub">Visa, Mastercard, RuPay cards</div>
+              </div>
+            </div>
+            <input type="radio" name="groww-pay" value="Card" />
+          </div>
+
+          <!-- Net Banking -->
+          <div class="pay-option" data-method="NetBanking">
+            <div class="pay-option-left">
+              <div class="pay-icon bank-icon">🏦</div>
+              <div>
+                <div class="pay-name">Net Banking</div>
+                <div class="pay-sub">HDFC, SBI, ICICI, Axis Bank</div>
+              </div>
+            </div>
+            <input type="radio" name="groww-pay" value="NetBanking" />
+          </div>
+        </div>
+
+        <button type="button" id="btn-step2-proceed" class="submit-btn btn-green" style="margin-top: 14px;">
+          Proceed to Pay
+        </button>
+      </div>
+
+      <!-- STEP 3: Enter UPI PIN / Security PIN -->
+      <div id="groww-step-3" class="groww-flow-step hidden">
+        <div class="pin-auth-container">
+          <div class="pin-brand-header">
+            <span id="pin-brand-badge" class="badge badge-green">PhonePe UPI</span>
+            <div class="pin-amount-due" id="pin-amount-due">$1,000.00</div>
+          </div>
+          <p class="subtitle" style="text-align: center; margin: 12px 0 6px;">ENTER 4-DIGIT SECURITY PIN</p>
+          <div class="pin-inputs-wrapper">
+            <input type="password" maxlength="1" class="pin-box" autofocus />
+            <input type="password" maxlength="1" class="pin-box" />
+            <input type="password" maxlength="1" class="pin-box" />
+            <input type="password" maxlength="1" class="pin-box" />
+          </div>
+          <p class="pin-warning-note">🔒 Simulated NPCI / Bank 256-bit Secure Gateway</p>
+          <button type="button" id="btn-submit-pin" class="submit-btn btn-green" style="margin-top: 16px;">
+            Submit PIN & Authorize
+          </button>
         </div>
       </div>
 
-      <!-- Payment Method Selection Grid -->
-      <div class="payment-methods-section">
-        <label class="section-title">Select Payment Mode</label>
-        
-        <!-- PhonePe Tile -->
-        <div class="pay-option selected" data-method="PhonePe">
-          <div class="pay-option-left">
-            <div class="pay-icon phonepe-icon">🟣</div>
-            <div>
-              <div class="pay-name">PhonePe UPI</div>
-              <div class="pay-sub">Fast & auto-approved via UPI app</div>
-            </div>
-          </div>
-          <input type="radio" name="pay-method" value="PhonePe" checked />
-        </div>
-
-        <!-- Google Pay Tile -->
-        <div class="pay-option" data-method="GooglePay">
-          <div class="pay-option-left">
-            <div class="pay-icon gpay-icon">🔵</div>
-            <div>
-              <div class="pay-name">Google Pay (GPay)</div>
-              <div class="pay-sub">Instant zero-fee credit</div>
-            </div>
-          </div>
-          <input type="radio" name="pay-method" value="GooglePay" />
-        </div>
-
-        <!-- Paytm Tile -->
-        <div class="pay-option" data-method="Paytm">
-          <div class="pay-option-left">
-            <div class="pay-icon paytm-icon">🟦</div>
-            <div>
-              <div class="pay-name">Paytm UPI / Wallet</div>
-              <div class="pay-sub">One-click simulated payment</div>
-            </div>
-          </div>
-          <input type="radio" name="pay-method" value="Paytm" />
-        </div>
-
-        <!-- Other UPI ID -->
-        <div class="pay-option" data-method="CustomUPI">
-          <div class="pay-option-left">
-            <div class="pay-icon upi-icon">🆔</div>
-            <div>
-              <div class="pay-name">Other UPI ID / VPA</div>
-              <div class="pay-sub">BHIM, Cred, or custom UPI handle</div>
-            </div>
-          </div>
-          <input type="radio" name="pay-method" value="CustomUPI" />
-        </div>
-
-        <!-- Net Banking -->
-        <div class="pay-option" data-method="NetBanking">
-          <div class="pay-option-left">
-            <div class="pay-icon bank-icon">🏦</div>
-            <div>
-              <div class="pay-name">Net Banking</div>
-              <div class="pay-sub">HDFC, SBI, ICICI, Axis Bank</div>
-            </div>
-          </div>
-          <input type="radio" name="pay-method" value="NetBanking" />
-        </div>
-
-        <!-- Custom UPI Input field -->
-        <div id="upi-input-container" class="form-group hidden" style="margin-top: 10px;">
-          <input type="text" id="custom-upi-id" placeholder="e.g. yourname@okhdfcbank" />
+      <!-- STEP 4: Success Screen -->
+      <div id="groww-step-4" class="groww-flow-step hidden">
+        <div class="success-screen-box">
+          <div class="success-checkmark-circle">✓</div>
+          <h3 class="text-white font-bold" style="font-size: 1.25rem; margin-top: 12px;">Payment Successful!</h3>
+          <p class="text-green font-mono font-bold" id="success-credited-amount" style="font-size: 1.5rem; margin: 6px 0;">+$1,000.00</p>
+          <p class="subtitle" id="success-meta-msg">Money added to trading wallet via PhonePe</p>
+          <div class="tx-id-badge font-mono" id="success-tx-id">TXN: UPI/2026/94821</div>
+          <button type="button" id="btn-finish-deposit" class="submit-btn btn-blue" style="margin-top: 18px;">
+            Done & Return to Terminal
+          </button>
         </div>
       </div>
 
-      <!-- Processing State Placeholder -->
+      <!-- Processing State Overlay -->
       <div id="deposit-loader" class="deposit-loader-overlay hidden">
         <div class="loader-spinner"></div>
-        <p id="deposit-loader-text" class="font-bold" style="margin-top: 10px;">Connecting to PhonePe Gateway...</p>
-        <span class="subtitle">Please do not refresh the screen</span>
+        <p id="deposit-loader-text" class="font-bold" style="margin-top: 10px;">Connecting to Bank Gateway...</p>
+        <span class="subtitle">Please do not press back or refresh</span>
       </div>
-
-      <button type="button" id="btn-pay-now" class="submit-btn btn-green" style="margin-top: 14px;">
-        Pay $1,000 via PhonePe
-      </button>
     </div>
   </div>
 
@@ -215,6 +258,7 @@
 
       <!-- User/Admin Status Ribbon -->
       <div class="user-status">
+        <!-- User Status Section -->
         <div id="user-status-metrics" style="display: flex; gap: 14px; align-items: center;">
           <div class="status-item">
             <span class="status-label">Wallet:</span>
@@ -222,11 +266,31 @@
           </div>
           <button type="button" id="open-deposit-btn" class="add-funds-btn">+ Add Money</button>
           <span id="nav-kyc-status" class="badge badge-red cursor-pointer">KYC Pending</span>
+          <button type="button" id="btn-user-logout" class="profile-pill-btn">
+            <span class="avatar-dot"></span>
+            <span id="nav-user-label">Sign Out</span>
+          </button>
         </div>
-        <button type="button" id="btn-logout" class="profile-pill-btn">
-          <span class="avatar-dot"></span>
-          <span id="nav-user-label">Sign Out</span>
-        </button>
+
+        <!-- Admin Profile Button with Dropdown Logout -->
+        <div id="admin-profile-container" class="admin-profile-wrap hidden">
+          <button type="button" id="btn-admin-profile-toggle" class="profile-pill-btn" style="border-color: #ef4444;">
+            <span class="avatar-dot" style="background-color: #ef4444;"></span>
+            <span class="font-bold">Admin Console ▾</span>
+          </button>
+          
+          <!-- Dropdown Menu on Profile Click -->
+          <div id="admin-dropdown-menu" class="admin-dropdown hidden">
+            <div class="admin-dropdown-header">
+              <span class="text-white font-bold">System Administrator</span>
+              <span class="subtitle">Root Privileges</span>
+            </div>
+            <div class="admin-dropdown-divider"></div>
+            <button type="button" id="btn-admin-logout" class="admin-logout-btn">
+              🚪 Logout Administrator
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </header>

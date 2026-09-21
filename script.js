@@ -66,6 +66,7 @@ let currentSession = null;
 let currentUser = null;
 let isSignupMode = false;
 let selectedPaymentMethod = 'PhonePe';
+let pendingDepositAmount = 1000;
 
 function getAllUserKeys() {
   return Object.keys(localStorage)
@@ -112,25 +113,52 @@ const adminNavTabs = document.getElementById('admin-nav-tabs');
 const moduleIndicatorBadge = document.getElementById('module-indicator-badge');
 const navUserLabel = document.getElementById('nav-user-label');
 const userStatusMetrics = document.getElementById('user-status-metrics');
-const btnLogout = document.getElementById('btn-logout');
+const btnUserLogout = document.getElementById('btn-user-logout');
 
-// KYC & Groww-Style Deposit Elements
+// Admin Profile & Dropdown
+const adminProfileContainer = document.getElementById('admin-profile-container');
+const btnAdminProfileToggle = document.getElementById('btn-admin-profile-toggle');
+const adminDropdownMenu = document.getElementById('admin-dropdown-menu');
+const btnAdminLogout = document.getElementById('btn-admin-logout');
+
+// KYC Elements
 const kycOverlay = document.getElementById('kyc-overlay');
 const closeKycBtn = document.getElementById('close-kyc-btn');
 const kycForm = document.getElementById('kyc-form');
 const kycWarningBanner = document.getElementById('kyc-warning-banner');
 const navKycStatus = document.getElementById('nav-kyc-status');
 
+// Groww Multi-Step Checkout Elements
 const depositOverlay = document.getElementById('deposit-overlay');
 const openDepositBtn = document.getElementById('open-deposit-btn');
 const closeDepositBtn = document.getElementById('close-deposit-btn');
+const growwBackBtn = document.getElementById('groww-back-btn');
+const growwStepTitle = document.getElementById('groww-step-title');
+const growwStepSub = document.getElementById('groww-step-sub');
+
+const growwStep1 = document.getElementById('groww-step-1');
+const growwStep2 = document.getElementById('groww-step-2');
+const growwStep3 = document.getElementById('groww-step-3');
+const growwStep4 = document.getElementById('groww-step-4');
+
 const depositCustomAmt = document.getElementById('deposit-custom-amt');
-const btnPayNow = document.getElementById('btn-pay-now');
+const btnStep1Continue = document.getElementById('btn-step1-continue');
+const step2AmountLabel = document.getElementById('step2-amount-label');
+const btnStep2Proceed = document.getElementById('btn-step2-proceed');
+
+const pinBrandBadge = document.getElementById('pin-brand-badge');
+const pinAmountDue = document.getElementById('pin-amount-due');
+const pinBoxes = document.querySelectorAll('.pin-box');
+const btnSubmitPin = document.getElementById('btn-submit-pin');
+
+const successCreditedAmount = document.getElementById('success-credited-amount');
+const successMetaMsg = document.getElementById('success-meta-msg');
+const successTxId = document.getElementById('success-tx-id');
+const btnFinishDeposit = document.getElementById('btn-finish-deposit');
 const depositLoader = document.getElementById('deposit-loader');
 const depositLoaderText = document.getElementById('deposit-loader-text');
-const upiInputContainer = document.getElementById('upi-input-container');
-const customUpiId = document.getElementById('custom-upi-id');
 
+// User KPI Ribbon
 const navCash = document.getElementById('nav-cash');
 const kpiCash = document.getElementById('kpi-cash');
 const kpiInvested = document.getElementById('kpi-invested');
@@ -259,9 +287,9 @@ function redirectModule(role) {
     userNavTabs.classList.add('hidden');
     adminNavTabs.classList.remove('hidden');
     userStatusMetrics.classList.add('hidden');
+    adminProfileContainer.classList.remove('hidden');
     moduleIndicatorBadge.textContent = 'ADMIN CONSOLE';
     moduleIndicatorBadge.style.backgroundColor = '#ef4444';
-    navUserLabel.textContent = 'Exit Admin';
     renderAdminDashboard();
   } else {
     adminModuleRoot.classList.add('hidden');
@@ -269,6 +297,7 @@ function redirectModule(role) {
     adminNavTabs.classList.add('hidden');
     userNavTabs.classList.remove('hidden');
     userStatusMetrics.classList.remove('hidden');
+    adminProfileContainer.classList.add('hidden');
     moduleIndicatorBadge.textContent = 'USER PORTAL';
     moduleIndicatorBadge.style.backgroundColor = '#0284c7';
     navUserLabel.textContent = currentUser ? currentUser.username.toUpperCase() : 'Sign Out';
@@ -294,10 +323,28 @@ function checkActiveSession() {
   authOverlay.classList.remove('hidden');
 }
 
-btnLogout.addEventListener('click', () => {
+// User Logout
+btnUserLogout.addEventListener('click', () => {
   sessionStorage.removeItem('tradesim_session');
   currentSession = null;
   currentUser = null;
+  authOverlay.classList.remove('hidden');
+});
+
+// Admin Profile Dropdown & Logout
+btnAdminProfileToggle.addEventListener('click', (e) => {
+  e.stopPropagation();
+  adminDropdownMenu.classList.toggle('hidden');
+});
+
+document.addEventListener('click', () => {
+  adminDropdownMenu.classList.add('hidden');
+});
+
+btnAdminLogout.addEventListener('click', () => {
+  sessionStorage.removeItem('tradesim_session');
+  currentSession = null;
+  adminDropdownMenu.classList.add('hidden');
   authOverlay.classList.remove('hidden');
 });
 
@@ -373,26 +420,76 @@ kycForm.addEventListener('submit', (e) => {
   alert('KYC details submitted! Switch to Admin Module to approve it.');
 });
 
-// --- Groww-Style Add Money (PhonePe, GPay, Paytm) ---
-openDepositBtn.addEventListener('click', () => depositOverlay.classList.remove('hidden'));
-closeDepositBtn.addEventListener('click', () => depositOverlay.classList.add('hidden'));
+// ==================== GROWW-STYLE STEP-BY-STEP PAYMENT CONTROLLER ====================
+function showGrowwStep(stepNumber) {
+  growwStep1.classList.add('hidden');
+  growwStep2.classList.add('hidden');
+  growwStep3.classList.add('hidden');
+  growwStep4.classList.add('hidden');
 
-function updateDepositBtnLabel() {
-  const amt = parseFloat(depositCustomAmt.value) || 0;
-  btnPayNow.textContent = `Pay $${amt.toLocaleString('en-US')} via ${selectedPaymentMethod}`;
+  if (stepNumber === 1) {
+    growwStep1.classList.remove('hidden');
+    growwBackBtn.classList.add('hidden');
+    growwStepTitle.textContent = 'Add Money to Wallet';
+    growwStepSub.textContent = 'Step 1 of 3: Enter Amount';
+  } else if (stepNumber === 2) {
+    growwStep2.classList.remove('hidden');
+    growwBackBtn.classList.remove('hidden');
+    growwStepTitle.textContent = 'Select Payment Method';
+    growwStepSub.textContent = 'Step 2 of 3: UPI / Cards / Net Banking';
+    step2AmountLabel.textContent = `$${pendingDepositAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  } else if (stepNumber === 3) {
+    growwStep3.classList.remove('hidden');
+    growwBackBtn.classList.remove('hidden');
+    growwStepTitle.textContent = 'UPI Security PIN';
+    growwStepSub.textContent = 'Step 3 of 3: Authenticate with PIN';
+    pinBrandBadge.textContent = `${selectedPaymentMethod} Gateway`;
+    pinAmountDue.textContent = `$${pendingDepositAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    pinBoxes.forEach(b => b.value = '');
+    setTimeout(() => pinBoxes[0].focus(), 100);
+  } else if (stepNumber === 4) {
+    growwStep4.classList.remove('hidden');
+    growwBackBtn.classList.add('hidden');
+    growwStepTitle.textContent = 'Payment Completed';
+    growwStepSub.textContent = 'Transaction Successful';
+    successCreditedAmount.textContent = `+$${pendingDepositAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    successMetaMsg.textContent = `Money credited to wallet via ${selectedPaymentMethod}`;
+    successTxId.textContent = `TXN: ${selectedPaymentMethod.toUpperCase()}/2026/${Math.floor(100000 + Math.random() * 900000)}`;
+  }
 }
 
-depositCustomAmt.addEventListener('input', updateDepositBtnLabel);
+openDepositBtn.addEventListener('click', () => {
+  pendingDepositAmount = parseFloat(depositCustomAmt.value) || 1000;
+  showGrowwStep(1);
+  depositOverlay.classList.remove('hidden');
+});
 
+closeDepositBtn.addEventListener('click', () => {
+  depositOverlay.classList.add('hidden');
+});
+
+growwBackBtn.addEventListener('click', () => {
+  if (!growwStep2.classList.contains('hidden')) showGrowwStep(1);
+  else if (!growwStep3.classList.contains('hidden')) showGrowwStep(2);
+});
+
+// Step 1: Quick Amount Chips
 document.querySelectorAll('.quick-amt-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.quick-amt-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     depositCustomAmt.value = btn.dataset.amt;
-    updateDepositBtnLabel();
   });
 });
 
+btnStep1Continue.addEventListener('click', () => {
+  const amt = parseFloat(depositCustomAmt.value);
+  if (isNaN(amt) || amt <= 0) return alert('Enter a valid deposit amount.');
+  pendingDepositAmount = amt;
+  showGrowwStep(2);
+});
+
+// Step 2: Payment Method Selectors
 document.querySelectorAll('.pay-option').forEach(tile => {
   tile.addEventListener('click', () => {
     document.querySelectorAll('.pay-option').forEach(t => {
@@ -402,36 +499,48 @@ document.querySelectorAll('.pay-option').forEach(tile => {
     tile.classList.add('selected');
     tile.querySelector('input[type="radio"]').checked = true;
     selectedPaymentMethod = tile.dataset.method;
-
-    if (selectedPaymentMethod === 'CustomUPI') {
-      upiInputContainer.classList.remove('hidden');
-    } else {
-      upiInputContainer.classList.add('hidden');
-    }
-    updateDepositBtnLabel();
   });
 });
 
-btnPayNow.addEventListener('click', () => {
-  const amt = parseFloat(depositCustomAmt.value);
-  if (isNaN(amt) || amt <= 0) return alert('Please enter a valid deposit amount.');
+btnStep2Proceed.addEventListener('click', () => {
+  showGrowwStep(3);
+});
 
-  if (selectedPaymentMethod === 'CustomUPI') {
-    const vpa = customUpiId.value.trim();
-    if (!vpa.includes('@')) return alert('Please enter a valid UPI VPA handle (e.g. name@upi).');
-  }
+// Step 3: PIN Input Auto-Focus Handling
+pinBoxes.forEach((box, index) => {
+  box.addEventListener('input', (e) => {
+    if (e.target.value.length === 1 && index < pinBoxes.length - 1) {
+      pinBoxes[index + 1].focus();
+    }
+  });
+  box.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+      pinBoxes[index - 1].focus();
+    }
+  });
+});
 
+btnSubmitPin.addEventListener('click', () => {
+  let pinVal = '';
+  pinBoxes.forEach(b => pinVal += b.value);
+  if (pinVal.length < 4) return alert('Please enter your 4-digit PIN to authorize payment.');
+
+  // Trigger banking simulation overlay
   depositLoader.classList.remove('hidden');
-  depositLoaderText.textContent = `Processing $${amt.toFixed(2)} via ${selectedPaymentMethod}...`;
+  depositLoaderText.textContent = `Authorizing $${pendingDepositAmount.toFixed(2)} with ${selectedPaymentMethod}...`;
 
   setTimeout(() => {
     depositLoader.classList.add('hidden');
-    currentUser.cash = +(currentUser.cash + amt).toFixed(2);
+    currentUser.cash = +(currentUser.cash + pendingDepositAmount).toFixed(2);
     saveUserData(currentUser);
     updateUserKPIRibbon();
-    depositOverlay.classList.add('hidden');
-    alert(`Payment Successful! $${amt.toFixed(2)} added to your trading wallet via ${selectedPaymentMethod}.`);
-  }, 1500);
+    showGrowwStep(4);
+  }, 1400);
+});
+
+// Step 4: Finish and close
+btnFinishDeposit.addEventListener('click', () => {
+  depositOverlay.classList.add('hidden');
 });
 
 function updateUserKPIRibbon() {
@@ -825,7 +934,7 @@ adminAddStockForm.addEventListener('submit', (e) => {
   alert(`IPO Successful: ${sym} (${name}) is now listed on TradeSim!`);
 });
 
-// Simulation Loop
+// Simulation Heartbeat Loop
 setInterval(() => {
   Object.keys(state.stocks).forEach(sym => {
     const s = state.stocks[sym];

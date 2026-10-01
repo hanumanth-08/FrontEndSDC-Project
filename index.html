@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TradeSim Pro - Dual Module Trading Terminal</title>
+  <title>TradeSim Pro - Dual Module Trading Terminal (INR)</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <!-- ==================== GROWW-STYLE STEP-BY-STEP PAYMENT MODAL ==================== -->
+  <!-- ==================== GROWW-STYLE STEP-BY-STEP PAYMENT MODAL (INR) ==================== -->
   <div id="deposit-overlay" class="modal-overlay hidden">
     <div class="auth-card groww-checkout-card">
       <div class="profile-header">
@@ -96,16 +96,16 @@
       <!-- STEP 1: Enter Amount & Chips -->
       <div id="groww-step-1" class="groww-flow-step">
         <div class="deposit-amt-entry">
-          <label class="deposit-amt-label">Enter Deposit Amount</label>
+          <label class="deposit-amt-label">Enter Deposit Amount (INR)</label>
           <div class="amt-input-wrap">
-            <span class="currency-symbol">$</span>
-            <input type="number" id="deposit-custom-amt" value="1000" min="10" max="500000" />
+            <span class="currency-symbol">₹</span>
+            <input type="number" id="deposit-custom-amt" value="5000" min="100" max="5000000" />
           </div>
           <div class="quick-deposit-grid">
-            <button type="button" class="quick-amt-btn" data-amt="100">+100</button>
-            <button type="button" class="quick-amt-btn" data-amt="500">+500</button>
-            <button type="button" class="quick-amt-btn active" data-amt="1000">+1,000</button>
-            <button type="button" class="quick-amt-btn" data-amt="5000">+5,000</button>
+            <button type="button" class="quick-amt-btn" data-amt="500">+₹500</button>
+            <button type="button" class="quick-amt-btn" data-amt="1000">+₹1,000</button>
+            <button type="button" class="quick-amt-btn active" data-amt="5000">+₹5,000</button>
+            <button type="button" class="quick-amt-btn" data-amt="10000">+₹10,000</button>
           </div>
         </div>
         <button type="button" id="btn-step1-continue" class="submit-btn btn-green">
@@ -117,7 +117,7 @@
       <div id="groww-step-2" class="groww-flow-step hidden">
         <div class="summary-pill-bar">
           <span>Amount to Pay:</span>
-          <strong class="text-green font-mono" id="step2-amount-label">$1,000.00</strong>
+          <strong class="text-green font-mono" id="step2-amount-label">₹5,000.00</strong>
         </div>
 
         <div class="payment-methods-section">
@@ -192,7 +192,7 @@
         <div class="pin-auth-container">
           <div class="pin-brand-header">
             <span id="pin-brand-badge" class="badge badge-green">PhonePe UPI</span>
-            <div class="pin-amount-due" id="pin-amount-due">$1,000.00</div>
+            <div class="pin-amount-due" id="pin-amount-due">₹5,000.00</div>
           </div>
           <p class="subtitle" style="text-align: center; margin: 12px 0 6px;">ENTER 4-DIGIT SECURITY PIN</p>
           <div class="pin-inputs-wrapper">
@@ -213,7 +213,7 @@
         <div class="success-screen-box">
           <div class="success-checkmark-circle">✓</div>
           <h3 class="text-white font-bold" style="font-size: 1.25rem; margin-top: 12px;">Payment Successful!</h3>
-          <p class="text-green font-mono font-bold" id="success-credited-amount" style="font-size: 1.5rem; margin: 6px 0;">+$1,000.00</p>
+          <p class="text-green font-mono font-bold" id="success-credited-amount" style="font-size: 1.5rem; margin: 6px 0;">+₹5,000.00</p>
           <p class="subtitle" id="success-meta-msg">Money added to trading wallet via PhonePe</p>
           <div class="tx-id-badge font-mono" id="success-tx-id">TXN: UPI/2026/94821</div>
           <button type="button" id="btn-finish-deposit" class="submit-btn btn-blue" style="margin-top: 18px;">
@@ -258,11 +258,10 @@
 
       <!-- User/Admin Status Ribbon -->
       <div class="user-status">
-        <!-- User Status Section -->
         <div id="user-status-metrics" style="display: flex; gap: 14px; align-items: center;">
           <div class="status-item">
             <span class="status-label">Wallet:</span>
-            <span id="nav-cash" class="status-value text-green">$0.00</span>
+            <span id="nav-cash" class="status-value text-green">₹0.00</span>
           </div>
           <button type="button" id="open-deposit-btn" class="add-funds-btn">+ Add Money</button>
           <span id="nav-kyc-status" class="badge badge-red cursor-pointer">KYC Pending</span>
@@ -272,14 +271,11 @@
           </button>
         </div>
 
-        <!-- Admin Profile Button with Dropdown Logout -->
         <div id="admin-profile-container" class="admin-profile-wrap hidden">
           <button type="button" id="btn-admin-profile-toggle" class="profile-pill-btn" style="border-color: #ef4444;">
             <span class="avatar-dot" style="background-color: #ef4444;"></span>
             <span class="font-bold">Admin Console ▾</span>
           </button>
-          
-          <!-- Dropdown Menu on Profile Click -->
           <div id="admin-dropdown-menu" class="admin-dropdown hidden">
             <div class="admin-dropdown-header">
               <span class="text-white font-bold">System Administrator</span>
@@ -301,22 +297,22 @@
     <section class="kpi-ribbon">
       <div class="kpi-card">
         <span class="kpi-label">Trading Balance</span>
-        <div id="kpi-cash" class="kpi-val text-green">$0.00</div>
+        <div id="kpi-cash" class="kpi-val text-green">₹0.00</div>
         <span class="kpi-sub">Available Purchasing Power</span>
       </div>
       <div class="kpi-card">
         <span class="kpi-label">Invested Equity</span>
-        <div id="kpi-invested" class="kpi-val">$0.00</div>
+        <div id="kpi-invested" class="kpi-val">₹0.00</div>
         <span class="kpi-sub">Mark-to-Market Valuation</span>
       </div>
       <div class="kpi-card">
         <span class="kpi-label">Portfolio Net Worth</span>
-        <div id="kpi-networth" class="kpi-val">$0.00</div>
+        <div id="kpi-networth" class="kpi-val">₹0.00</div>
         <span class="kpi-sub">Liquid Cash + Open Assets</span>
       </div>
       <div class="kpi-card">
         <span class="kpi-label">Unrealized P&L</span>
-        <div id="kpi-pnl" class="kpi-val text-green">+$0.00</div>
+        <div id="kpi-pnl" class="kpi-val text-green">+₹0.00</div>
         <span class="kpi-sub">Aggregate Position Returns</span>
       </div>
     </section>
@@ -326,8 +322,8 @@
       <div class="card">
         <div class="stocks-toolbar">
           <div>
-            <h2 class="card-title">Equities & Market Screener</h2>
-            <p class="subtitle">Live multi-cap stock feeds populated dynamically via state</p>
+            <h2 class="card-title">Equities & Market Screener (NSE / BSE)</h2>
+            <p class="subtitle">Live multi-cap stock feeds populated dynamically via state in Indian Rupees (₹)</p>
           </div>
           <div class="filter-actions">
             <input type="text" id="screener-search" placeholder="Search symbol or name..." class="search-input" />
@@ -366,9 +362,9 @@
                 <span id="trade-active-category" class="cat-tag">Large Cap</span>
                 <span class="live-indicator"><span class="pulse-dot"></span> SIM ACTIVE</span>
               </div>
-              <h2 id="trade-active-name" class="stock-title">Apple Inc. (AAPL)</h2>
+              <h2 id="trade-active-name" class="stock-title">Reliance Industries (RELIANCE)</h2>
               <div class="price-row">
-                <span id="trade-active-price" class="current-price">$185.50</span>
+                <span id="trade-active-price" class="current-price">₹2,950.00</span>
                 <span id="trade-active-delta" class="badge badge-green">+0.00%</span>
                 <span id="trade-hover-price" class="chart-hover-val font-mono"></span>
               </div>
@@ -404,24 +400,24 @@
               <select id="order-symbol-select" class="cap-select" style="width: 100%;"></select>
             </div>
             <div class="form-group">
-              <label for="order-qty">Quantity of Units</label>
+              <label for="order-qty">Quantity of Shares</label>
               <input type="number" id="order-qty" min="1" value="1" />
             </div>
             <div class="estimate-box">
               <div class="estimate-row">
                 <span>Unit Price:</span>
-                <span id="order-unit-price" class="font-mono">$0.00</span>
+                <span id="order-unit-price" class="font-mono">₹0.00</span>
               </div>
               <div class="estimate-row font-bold">
                 <span>Total Order Cost:</span>
-                <span id="order-total" class="font-mono text-white">$0.00</span>
+                <span id="order-total" class="font-mono text-white">₹0.00</span>
               </div>
             </div>
             <button type="submit" id="btn-submit" class="submit-btn btn-green">Confirm Purchase</button>
           </form>
           <div class="asset-position-box">
-            <span class="stat-label">Position in <span id="pos-sym">AAPL</span></span>
-            <div class="font-bold text-white" id="pos-details">0 units ($0.00)</div>
+            <span class="stat-label">Position in <span id="pos-sym">RELIANCE</span></span>
+            <div class="font-bold text-white" id="pos-details">0 units (₹0.00)</div>
           </div>
         </aside>
       </div>
@@ -430,14 +426,14 @@
     <!-- TAB 3: HOLDINGS -->
     <section id="holdings-view" class="tab-view hidden">
       <div class="card">
-        <h2 class="card-title">Active Portfolio Holdings</h2>
+        <h2 class="card-title">Active Portfolio Holdings (INR)</h2>
         <div class="table-container" style="max-height: none; margin-top: 10px;">
           <table class="data-table">
             <thead>
               <tr>
                 <th>Symbol</th>
                 <th>Company</th>
-                <th>Units</th>
+                <th>Quantity</th>
                 <th>Avg Price (VWAP)</th>
                 <th>Current Price</th>
                 <th>Current Value</th>
@@ -491,8 +487,8 @@
       </div>
       <div class="kpi-card">
         <span class="kpi-label">Total System Liquidity</span>
-        <div id="admin-kpi-total-cash" class="kpi-val text-green">$0.00</div>
-        <span class="kpi-sub">Circulating Virtual Capital</span>
+        <div id="admin-kpi-total-cash" class="kpi-val text-green">₹0.00</div>
+        <span class="kpi-sub">Circulating Virtual Capital (INR)</span>
       </div>
       <div class="kpi-card">
         <span class="kpi-label">Tradable Equities</span>
@@ -531,12 +527,12 @@
           <p class="subtitle" style="margin-bottom: 14px;">Introduce new equities directly into the market simulation engine</p>
           <form id="admin-add-stock-form">
             <div class="form-group">
-              <label for="new-stock-symbol">Ticker Symbol</label>
+              <label for="new-stock-symbol">Ticker Symbol (e.g. TATAPOWER)</label>
               <input type="text" id="new-stock-symbol" maxlength="10" required placeholder="SYMBOL" style="text-transform: uppercase;" />
             </div>
             <div class="form-group">
               <label for="new-stock-name">Company Full Name</label>
-              <input type="text" id="new-stock-name" required placeholder="Tata Motors Ltd." />
+              <input type="text" id="new-stock-name" required placeholder="Tata Power Co. Ltd." />
             </div>
             <div class="form-group">
               <label for="new-stock-category">Market Capitalization Category</label>
@@ -546,8 +542,8 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="new-stock-price">Initial Listing Price ($)</label>
-              <input type="number" step="0.01" id="new-stock-price" min="1" required placeholder="e.g. 150.00" />
+              <label for="new-stock-price">Initial Listing Price (₹)</label>
+              <input type="number" step="0.05" id="new-stock-price" min="1" required placeholder="e.g. 420.50" />
             </div>
             <button type="submit" class="submit-btn btn-green">List Equity on Exchange</button>
           </form>
@@ -562,7 +558,7 @@
                 <tr>
                   <th>Symbol</th>
                   <th>Company</th>
-                  <th>Current Price</th>
+                  <th>Current Price (₹)</th>
                   <th class="text-right">Action</th>
                 </tr>
               </thead>

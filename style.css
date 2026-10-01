@@ -95,11 +95,11 @@ body {
 .amt-input-wrap {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 10px;
 }
 .currency-symbol {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 800;
   color: var(--accent-green);
 }

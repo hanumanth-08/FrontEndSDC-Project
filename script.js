@@ -11,36 +11,41 @@ function createHistory(basePrice, count, volatility) {
   return arr;
 }
 
-// --- Application State ---
+// Format numbers into Indian Rupees (INR)
+function formatINR(val) {
+  return "₹" + Number(val).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// --- Application State with Indian Equities (NSE / BSE in ₹) ---
 const state = {
-  activeSymbol: 'AAPL',
+  activeSymbol: 'RELIANCE',
   orderType: 'BUY',
   timeframe: '1D',
   hoverIndex: null,
   filterCap: 'ALL',
   searchQuery: '',
   stocks: {
-    AAPL: { name: 'Apple Inc.', category: 'Large Cap', price: 185.50, vol: 0.015 },
-    MSFT: { name: 'Microsoft Corp.', category: 'Large Cap', price: 415.20, vol: 0.014 },
-    GOOGL: { name: 'Alphabet Inc.', category: 'Large Cap', price: 168.40, vol: 0.016 },
-    AMZN: { name: 'Amazon.com Inc.', category: 'Large Cap', price: 178.90, vol: 0.018 },
-    META: { name: 'Meta Platforms', category: 'Large Cap', price: 495.30, vol: 0.022 },
-    NVDA: { name: 'NVIDIA Corp.', category: 'Large Cap', price: 485.60, vol: 0.025 },
-    TSLA: { name: 'Tesla Inc.', category: 'Large Cap', price: 238.40, vol: 0.030 },
-    JPM: { name: 'JPMorgan Chase & Co.', category: 'Large Cap', price: 198.70, vol: 0.012 },
-    V: { name: 'Visa Inc.', category: 'Large Cap', price: 275.40, vol: 0.011 },
-    JNJ: { name: 'Johnson & Johnson', category: 'Large Cap', price: 156.10, vol: 0.009 },
-    LLY: { name: 'Eli Lilly and Co.', category: 'Large Cap', price: 742.80, vol: 0.018 },
-    WMT: { name: 'Walmart Inc.', category: 'Large Cap', price: 68.20, vol: 0.010 },
-    DIS: { name: 'The Walt Disney Co.', category: 'Large Cap', price: 112.50, vol: 0.017 },
-    PLTR: { name: 'Palantir Technologies', category: 'Small/Mid Cap', price: 28.40, vol: 0.035 },
-    SOFI: { name: 'SoFi Technologies', category: 'Small/Mid Cap', price: 7.65, vol: 0.040 },
-    RIVN: { name: 'Rivian Automotive', category: 'Small/Mid Cap', price: 13.80, vol: 0.045 },
-    SMCI: { name: 'Super Micro Computer', category: 'Small/Mid Cap', price: 48.90, vol: 0.050 },
-    CRWD: { name: 'CrowdStrike Holdings', category: 'Small/Mid Cap', price: 265.10, vol: 0.028 },
-    CELH: { name: 'Celsius Holdings Inc.', category: 'Small/Mid Cap', price: 34.20, vol: 0.038 },
-    RUN: { name: 'Sunrun Inc.', category: 'Small/Mid Cap', price: 11.45, vol: 0.048 },
-    SYM: { name: 'Symbotic Inc.', category: 'Small/Mid Cap', price: 22.80, vol: 0.052 }
+    RELIANCE: { name: 'Reliance Industries Ltd.', category: 'Large Cap', price: 2950.00, vol: 0.012 },
+    TCS: { name: 'Tata Consultancy Services', category: 'Large Cap', price: 4220.50, vol: 0.010 },
+    HDFCBANK: { name: 'HDFC Bank Ltd.', category: 'Large Cap', price: 1640.20, vol: 0.014 },
+    INFY: { name: 'Infosys Ltd.', category: 'Large Cap', price: 1890.40, vol: 0.015 },
+    ICICIBANK: { name: 'ICICI Bank Ltd.', category: 'Large Cap', price: 1245.80, vol: 0.013 },
+    TATAMOTORS: { name: 'Tata Motors Passenger Vehicles', category: 'Large Cap', price: 980.50, vol: 0.022 },
+    BHARTIARTL: { name: 'Bharti Airtel Ltd.', category: 'Large Cap', price: 1540.00, vol: 0.011 },
+    ITC: { name: 'ITC Ltd.', category: 'Large Cap', price: 510.30, vol: 0.009 },
+    LT: { name: 'Larsen & Toubro Ltd.', category: 'Large Cap', price: 3680.00, vol: 0.016 },
+    SBIN: { name: 'State Bank of India', category: 'Large Cap', price: 795.60, vol: 0.015 },
+    HINDUNILVR: { name: 'Hindustan Unilever Ltd.', category: 'Large Cap', price: 2780.00, vol: 0.008 },
+    MARUTI: { name: 'Maruti Suzuki India Ltd.', category: 'Large Cap', price: 12400.00, vol: 0.014 },
+    BAJFINANCE: { name: 'Bajaj Finance Ltd.', category: 'Large Cap', price: 7450.00, vol: 0.018 },
+    ZOMATO: { name: 'Zomato Ltd.', category: 'Small/Mid Cap', price: 265.40, vol: 0.035 },
+    TATASTEEL: { name: 'Tata Steel Ltd.', category: 'Small/Mid Cap', price: 154.20, vol: 0.025 },
+    PAYTM: { name: 'One97 Communications Ltd.', category: 'Small/Mid Cap', price: 680.50, vol: 0.040 },
+    YESBANK: { name: 'Yes Bank Ltd.', category: 'Small/Mid Cap', price: 24.15, vol: 0.045 },
+    SUZLON: { name: 'Suzlon Energy Ltd.', category: 'Small/Mid Cap', price: 82.30, vol: 0.048 },
+    IRFC: { name: 'Indian Railway Finance Corp.', category: 'Small/Mid Cap', price: 172.80, vol: 0.030 },
+    JIOFIN: { name: 'Jio Financial Services Ltd.', category: 'Small/Mid Cap', price: 345.60, vol: 0.028 },
+    RVNL: { name: 'Rail Vikas Nigam Ltd.', category: 'Small/Mid Cap', price: 540.20, vol: 0.038 }
   }
 };
 
@@ -66,7 +71,7 @@ let currentSession = null;
 let currentUser = null;
 let isSignupMode = false;
 let selectedPaymentMethod = 'PhonePe';
-let pendingDepositAmount = 1000;
+let pendingDepositAmount = 5000;
 
 function getAllUserKeys() {
   return Object.keys(localStorage)
@@ -79,8 +84,8 @@ function loadUserData(username) {
   if (raw) return JSON.parse(raw);
   return {
     username: username,
-    clientId: 'TS-' + Math.floor(1000 + Math.random() * 9000),
-    joinedDate: new Date().toLocaleDateString(),
+    clientId: 'TS-IN-' + Math.floor(1000 + Math.random() * 9000),
+    joinedDate: new Date().toLocaleDateString('en-IN'),
     cash: 0.00,
     isKycVerified: false,
     kycStatus: 'NOT_SUBMITTED',
@@ -115,20 +120,17 @@ const navUserLabel = document.getElementById('nav-user-label');
 const userStatusMetrics = document.getElementById('user-status-metrics');
 const btnUserLogout = document.getElementById('btn-user-logout');
 
-// Admin Profile & Dropdown
 const adminProfileContainer = document.getElementById('admin-profile-container');
 const btnAdminProfileToggle = document.getElementById('btn-admin-profile-toggle');
 const adminDropdownMenu = document.getElementById('admin-dropdown-menu');
 const btnAdminLogout = document.getElementById('btn-admin-logout');
 
-// KYC Elements
 const kycOverlay = document.getElementById('kyc-overlay');
 const closeKycBtn = document.getElementById('close-kyc-btn');
 const kycForm = document.getElementById('kyc-form');
 const kycWarningBanner = document.getElementById('kyc-warning-banner');
 const navKycStatus = document.getElementById('nav-kyc-status');
 
-// Groww Multi-Step Checkout Elements
 const depositOverlay = document.getElementById('deposit-overlay');
 const openDepositBtn = document.getElementById('open-deposit-btn');
 const closeDepositBtn = document.getElementById('close-deposit-btn');
@@ -158,7 +160,6 @@ const btnFinishDeposit = document.getElementById('btn-finish-deposit');
 const depositLoader = document.getElementById('deposit-loader');
 const depositLoaderText = document.getElementById('deposit-loader-text');
 
-// User KPI Ribbon
 const navCash = document.getElementById('nav-cash');
 const kpiCash = document.getElementById('kpi-cash');
 const kpiInvested = document.getElementById('kpi-invested');
@@ -245,14 +246,14 @@ authForm.addEventListener('submit', (e) => {
   const password = authPassword.value;
 
   if (role === 'admin') {
-    if (username === 'admin' && password === '999') {
+    if (username === 'admin' && password === 'admin123') {
       currentSession = { role: 'admin', username: 'admin' };
       sessionStorage.setItem('tradesim_session', JSON.stringify(currentSession));
       authOverlay.classList.add('hidden');
       redirectModule('admin');
       return;
     } else {
-      return alert('Invalid Admin Credentials! Use username "admin" and password "999".');
+      return alert('Invalid Admin Credentials! Use username "admin" and password "admin123".');
     }
   }
 
@@ -323,7 +324,6 @@ function checkActiveSession() {
   authOverlay.classList.remove('hidden');
 }
 
-// User Logout
 btnUserLogout.addEventListener('click', () => {
   sessionStorage.removeItem('tradesim_session');
   currentSession = null;
@@ -331,7 +331,6 @@ btnUserLogout.addEventListener('click', () => {
   authOverlay.classList.remove('hidden');
 });
 
-// Admin Profile Dropdown & Logout
 btnAdminProfileToggle.addEventListener('click', (e) => {
   e.stopPropagation();
   adminDropdownMenu.classList.toggle('hidden');
@@ -420,7 +419,7 @@ kycForm.addEventListener('submit', (e) => {
   alert('KYC details submitted! Switch to Admin Module to approve it.');
 });
 
-// ==================== GROWW-STYLE STEP-BY-STEP PAYMENT CONTROLLER ====================
+// ==================== GROWW-STYLE STEP-BY-STEP PAYMENT CONTROLLER (INR) ====================
 function showGrowwStep(stepNumber) {
   growwStep1.classList.add('hidden');
   growwStep2.classList.add('hidden');
@@ -431,20 +430,20 @@ function showGrowwStep(stepNumber) {
     growwStep1.classList.remove('hidden');
     growwBackBtn.classList.add('hidden');
     growwStepTitle.textContent = 'Add Money to Wallet';
-    growwStepSub.textContent = 'Step 1 of 3: Enter Amount';
+    growwStepSub.textContent = 'Step 1 of 3: Enter Amount (INR)';
   } else if (stepNumber === 2) {
     growwStep2.classList.remove('hidden');
     growwBackBtn.classList.remove('hidden');
     growwStepTitle.textContent = 'Select Payment Method';
     growwStepSub.textContent = 'Step 2 of 3: UPI / Cards / Net Banking';
-    step2AmountLabel.textContent = `$${pendingDepositAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    step2AmountLabel.textContent = formatINR(pendingDepositAmount);
   } else if (stepNumber === 3) {
     growwStep3.classList.remove('hidden');
     growwBackBtn.classList.remove('hidden');
     growwStepTitle.textContent = 'UPI Security PIN';
     growwStepSub.textContent = 'Step 3 of 3: Authenticate with PIN';
     pinBrandBadge.textContent = `${selectedPaymentMethod} Gateway`;
-    pinAmountDue.textContent = `$${pendingDepositAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    pinAmountDue.textContent = formatINR(pendingDepositAmount);
     pinBoxes.forEach(b => b.value = '');
     setTimeout(() => pinBoxes[0].focus(), 100);
   } else if (stepNumber === 4) {
@@ -452,14 +451,14 @@ function showGrowwStep(stepNumber) {
     growwBackBtn.classList.add('hidden');
     growwStepTitle.textContent = 'Payment Completed';
     growwStepSub.textContent = 'Transaction Successful';
-    successCreditedAmount.textContent = `+$${pendingDepositAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    successCreditedAmount.textContent = "+" + formatINR(pendingDepositAmount);
     successMetaMsg.textContent = `Money credited to wallet via ${selectedPaymentMethod}`;
     successTxId.textContent = `TXN: ${selectedPaymentMethod.toUpperCase()}/2026/${Math.floor(100000 + Math.random() * 900000)}`;
   }
 }
 
 openDepositBtn.addEventListener('click', () => {
-  pendingDepositAmount = parseFloat(depositCustomAmt.value) || 1000;
+  pendingDepositAmount = parseFloat(depositCustomAmt.value) || 5000;
   showGrowwStep(1);
   depositOverlay.classList.remove('hidden');
 });
@@ -473,7 +472,6 @@ growwBackBtn.addEventListener('click', () => {
   else if (!growwStep3.classList.contains('hidden')) showGrowwStep(2);
 });
 
-// Step 1: Quick Amount Chips
 document.querySelectorAll('.quick-amt-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.quick-amt-btn').forEach(b => b.classList.remove('active'));
@@ -484,12 +482,11 @@ document.querySelectorAll('.quick-amt-btn').forEach(btn => {
 
 btnStep1Continue.addEventListener('click', () => {
   const amt = parseFloat(depositCustomAmt.value);
-  if (isNaN(amt) || amt <= 0) return alert('Enter a valid deposit amount.');
+  if (isNaN(amt) || amt <= 0) return alert('Enter a valid deposit amount in INR.');
   pendingDepositAmount = amt;
   showGrowwStep(2);
 });
 
-// Step 2: Payment Method Selectors
 document.querySelectorAll('.pay-option').forEach(tile => {
   tile.addEventListener('click', () => {
     document.querySelectorAll('.pay-option').forEach(t => {
@@ -506,7 +503,6 @@ btnStep2Proceed.addEventListener('click', () => {
   showGrowwStep(3);
 });
 
-// Step 3: PIN Input Auto-Focus Handling
 pinBoxes.forEach((box, index) => {
   box.addEventListener('input', (e) => {
     if (e.target.value.length === 1 && index < pinBoxes.length - 1) {
@@ -525,9 +521,8 @@ btnSubmitPin.addEventListener('click', () => {
   pinBoxes.forEach(b => pinVal += b.value);
   if (pinVal.length < 4) return alert('Please enter your 4-digit PIN to authorize payment.');
 
-  // Trigger banking simulation overlay
   depositLoader.classList.remove('hidden');
-  depositLoaderText.textContent = `Authorizing $${pendingDepositAmount.toFixed(2)} with ${selectedPaymentMethod}...`;
+  depositLoaderText.textContent = `Authorizing ${formatINR(pendingDepositAmount)} with ${selectedPaymentMethod}...`;
 
   setTimeout(() => {
     depositLoader.classList.add('hidden');
@@ -538,7 +533,6 @@ btnSubmitPin.addEventListener('click', () => {
   }, 1400);
 });
 
-// Step 4: Finish and close
 btnFinishDeposit.addEventListener('click', () => {
   depositOverlay.classList.add('hidden');
 });
@@ -556,11 +550,11 @@ function updateUserKPIRibbon() {
   const net = currentUser.cash + invested;
   const isPos = pnl >= 0;
 
-  navCash.textContent = `$${currentUser.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-  kpiCash.textContent = `$${currentUser.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-  kpiInvested.textContent = `$${invested.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-  kpiNetworth.textContent = `$${net.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-  kpiPnl.textContent = `${isPos ? '+' : ''}$${pnl.toFixed(2)}`;
+  navCash.textContent = formatINR(currentUser.cash);
+  kpiCash.textContent = formatINR(currentUser.cash);
+  kpiInvested.textContent = formatINR(invested);
+  kpiNetworth.textContent = formatINR(net);
+  kpiPnl.textContent = `${isPos ? '+' : ''}${formatINR(pnl)}`;
   kpiPnl.className = `kpi-val ${isPos ? 'text-green' : 'text-red'}`;
 }
 
@@ -585,7 +579,7 @@ function renderWatchlist() {
         <td class="font-bold text-white">${sym}</td>
         <td style="color: var(--text-secondary);">${item.name}</td>
         <td><span class="cat-tag" style="font-size: 0.65rem;">${item.category}</span></td>
-        <td class="font-mono font-bold text-white">$${item.price.toFixed(2)}</td>
+        <td class="font-mono font-bold text-white">${formatINR(item.price)}</td>
         <td class="font-mono ${isUp ? 'text-green' : 'text-red'}">${isUp ? '+' : ''}${pct}%</td>
         <td class="text-right">
           <button class="select-btn" onclick="startTrade('${sym}')">Open Trade Desk</button>
@@ -617,7 +611,7 @@ function renderTradeHeader() {
   const s = state.stocks[state.activeSymbol];
   tradeActiveName.textContent = `${s.name} (${state.activeSymbol})`;
   tradeActiveCategory.textContent = s.category;
-  tradeActivePrice.textContent = `$${s.price.toFixed(2)}`;
+  tradeActivePrice.textContent = formatINR(s.price);
 
   const curData = s.history[state.timeframe];
   const firstP = curData[0] || s.price;
@@ -627,16 +621,16 @@ function renderTradeHeader() {
   tradeActiveDelta.className = `badge ${isUp ? 'badge-green' : 'badge-red'}`;
   tradeActiveDelta.textContent = `${isUp ? '+' : ''}${pct}%`;
 
-  orderUnitPrice.textContent = `$${s.price.toFixed(2)}`;
+  orderUnitPrice.textContent = formatINR(s.price);
   const qty = Math.max(1, parseInt(orderQty.value) || 1);
-  orderTotal.textContent = `$${(s.price * qty).toFixed(2)}`;
+  orderTotal.textContent = formatINR(s.price * qty);
 
   posSym.textContent = state.activeSymbol;
   if (currentUser && currentUser.portfolio[state.activeSymbol]) {
     const pos = currentUser.portfolio[state.activeSymbol];
-    posDetails.textContent = `${pos.qty} units (Avg: $${pos.avgPrice.toFixed(2)} | Val: $${(pos.qty * s.price).toFixed(2)})`;
+    posDetails.textContent = `${pos.qty} shares (Avg: ${formatINR(pos.avgPrice)} | Val: ${formatINR(pos.qty * s.price)})`;
   } else {
-    posDetails.textContent = `0 units ($0.00)`;
+    posDetails.textContent = `0 shares (₹0.00)`;
   }
 }
 
@@ -680,7 +674,7 @@ orderForm.addEventListener('submit', (e) => {
   const total = +(stock.price * qty).toFixed(2);
 
   if (state.orderType === 'BUY') {
-    if (currentUser.cash < total) return alert('Insufficient wallet balance! Click + Add Money.');
+    if (currentUser.cash < total) return alert(`Insufficient wallet balance! Need ${formatINR(total)}, but you have ${formatINR(currentUser.cash)}.`);
     currentUser.cash = +(currentUser.cash - total).toFixed(2);
 
     if (!currentUser.portfolio[sym]) {
@@ -701,7 +695,7 @@ orderForm.addEventListener('submit', (e) => {
 
   currentUser.orders.unshift({
     id: Math.floor(100000 + Math.random() * 900000),
-    timestamp: new Date().toLocaleTimeString(),
+    timestamp: new Date().toLocaleTimeString('en-IN'),
     type: state.orderType,
     symbol: sym,
     qty: qty,
@@ -715,7 +709,7 @@ orderForm.addEventListener('submit', (e) => {
   renderHoldings();
   renderOrders();
   renderTradeHeader();
-  alert('Order executed successfully!');
+  alert('Order executed successfully in Indian Equities!');
 });
 
 function renderHoldings() {
@@ -741,10 +735,10 @@ function renderHoldings() {
         <td class="font-bold text-white">${sym}</td>
         <td style="color:#94a3b8;">${pos.companyName}</td>
         <td class="font-bold">${pos.qty}</td>
-        <td class="font-mono">$${pos.avgPrice.toFixed(2)}</td>
-        <td class="font-mono">$${curP.toFixed(2)}</td>
-        <td class="font-mono font-bold text-white">$${curVal.toFixed(2)}</td>
-        <td class="font-mono ${isPos ? 'text-green' : 'text-red'} font-bold">${isPos ? '+' : ''}$${pnl.toFixed(2)}</td>
+        <td class="font-mono">${formatINR(pos.avgPrice)}</td>
+        <td class="font-mono">${formatINR(curP)}</td>
+        <td class="font-mono font-bold text-white">${formatINR(curVal)}</td>
+        <td class="font-mono ${isPos ? 'text-green' : 'text-red'} font-bold">${isPos ? '+' : ''}${formatINR(pnl)}</td>
         <td class="font-mono ${isPos ? 'text-green' : 'text-red'}">${isPos ? '+' : ''}${ret}%</td>
         <td class="text-right"><button class="select-btn" onclick="startTrade('${sym}')">Trade</button></td>
       </tr>
@@ -768,8 +762,8 @@ function renderOrders() {
       <td><span class="badge ${o.type === 'BUY' ? 'badge-green' : 'badge-red'}">${o.type}</span></td>
       <td class="font-bold text-white">${o.symbol}</td>
       <td>${o.qty}</td>
-      <td class="font-mono">$${o.price.toFixed(2)}</td>
-      <td class="font-mono font-bold text-white">$${o.total.toFixed(2)}</td>
+      <td class="font-mono">${formatINR(o.price)}</td>
+      <td class="font-mono font-bold text-white">${formatINR(o.total)}</td>
     </tr>
   `).join('');
 }
@@ -792,7 +786,7 @@ function drawInteractiveChart() {
     const y = (canvas.height / 5) * i;
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
     ctx.fillStyle = '#64748b'; ctx.font = '10px monospace';
-    ctx.fillText(`$${(max - ((i / 5) * range)).toFixed(2)}`, 8, y - 4);
+    ctx.fillText(`${formatINR(max - ((i / 5) * range))}`, 8, y - 4);
   }
 
   const isUp = dataset[dataset.length - 1] >= dataset[0];
@@ -828,7 +822,7 @@ document.getElementById('timeframe-container').addEventListener('click', (e) => 
   drawInteractiveChart();
 });
 
-// --- ADMIN MODULE ENGINE ---
+// --- ADMIN MODULE ENGINE (INR) ---
 function renderAdminDashboard() {
   const userKeys = getAllUserKeys();
   let totalCirculatingCash = 0;
@@ -847,7 +841,7 @@ function renderAdminDashboard() {
       <tr>
         <td class="font-mono text-white">${u.clientId}</td>
         <td class="font-bold text-white">${u.username}</td>
-        <td class="font-mono text-green">$${(u.cash || 0).toFixed(2)}</td>
+        <td class="font-mono text-green">${formatINR(u.cash || 0)}</td>
         <td>${u.kycDetails ? u.kycDetails.fullname : '<span style="color:#64748b;">Not Entered</span>'}</td>
         <td class="font-mono">${u.kycDetails ? u.kycDetails.pan : 'N/A'}</td>
         <td><span class="badge ${badgeClass}">${u.kycStatus}</span></td>
@@ -867,14 +861,14 @@ function renderAdminDashboard() {
 
   adminKpiUsers.textContent = userKeys.length;
   adminKpiKycPending.textContent = pendingKycCount;
-  adminKpiTotalCash.textContent = `$${totalCirculatingCash.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  adminKpiTotalCash.textContent = formatINR(totalCirculatingCash);
   adminKpiStocks.textContent = Object.keys(state.stocks).length;
 
   adminStocksBody.innerHTML = Object.entries(state.stocks).map(([sym, item]) => `
     <tr>
       <td class="font-bold text-white">${sym}</td>
       <td style="color:#94a3b8;">${item.name}</td>
-      <td class="font-mono text-green">$${item.price.toFixed(2)}</td>
+      <td class="font-mono text-green">${formatINR(item.price)}</td>
       <td class="text-right">
         <button class="select-btn" onclick="adminBoostPrice('${sym}')">+5% Boost</button>
       </td>
@@ -887,8 +881,8 @@ window.adminVerifyUser = (username, isApproved) => {
   if (isApproved) {
     u.isKycVerified = true;
     u.kycStatus = 'VERIFIED';
-    if (u.cash === 0) u.cash = 10000.00;
-    alert(`e-KYC Approved for client: ${username}. $10,000 credit allocated.`);
+    if (u.cash === 0) u.cash = 100000.00; // ₹1,00,000 welcome credit for Indian Demat
+    alert(`e-KYC Approved for client: ${username}. ₹1,00,000 virtual credit allocated.`);
   } else {
     u.isKycVerified = false;
     u.kycStatus = 'REJECTED';
@@ -911,7 +905,7 @@ adminAddStockForm.addEventListener('submit', (e) => {
   const cat = document.getElementById('new-stock-category').value;
   const price = parseFloat(document.getElementById('new-stock-price').value);
 
-  if (state.stocks[sym]) return alert('Ticker already exists on exchange!');
+  if (state.stocks[sym]) return alert('Ticker already exists on Indian exchange!');
 
   state.stocks[sym] = {
     name: name,
@@ -931,10 +925,10 @@ adminAddStockForm.addEventListener('submit', (e) => {
   refreshSymbolSelect();
   renderAdminDashboard();
   adminAddStockForm.reset();
-  alert(`IPO Successful: ${sym} (${name}) is now listed on TradeSim!`);
+  alert(`IPO Successful: ${sym} (${name}) is now listed on TradeSim at ${formatINR(price)}!`);
 });
 
-// Simulation Heartbeat Loop
+// Simulation Loop
 setInterval(() => {
   Object.keys(state.stocks).forEach(sym => {
     const s = state.stocks[sym];

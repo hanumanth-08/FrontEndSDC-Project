@@ -246,14 +246,14 @@ authForm.addEventListener('submit', (e) => {
   const password = authPassword.value;
 
   if (role === 'admin') {
-    if (username === 'admin' && password === 'admin123') {
+    if (username === 'admin' && password === '999') {
       currentSession = { role: 'admin', username: 'admin' };
       sessionStorage.setItem('tradesim_session', JSON.stringify(currentSession));
       authOverlay.classList.add('hidden');
       redirectModule('admin');
       return;
     } else {
-      return alert('Invalid Admin Credentials! Use username "admin" and password "admin123".');
+      return alert('Invalid Admin Credentials! Use username "admin" and password "999".');
     }
   }
 
